@@ -1,0 +1,18 @@
+# Editor Directory
+/.vs
+/.vscode/
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Compiled Dynamic libraries
+*.so
+*.dll
+
+# Executables
+*.exe
+*.out
+*.app
