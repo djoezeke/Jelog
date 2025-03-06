@@ -1,4 +1,0 @@
--colorful loggings
--formatted loggings
--timing and profiling
--log to file
