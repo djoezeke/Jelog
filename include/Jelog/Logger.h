@@ -1,10 +1,15 @@
 #pragma once
 
 #include <chrono>
+#include <mutex>
+#include <thread>
+#include <vector>
 
-#include "Je-Log.h"
-#include "Handler.h"
-#include "Formatter.h"
+#include <Jelog/Formatter.h>
+#include <Jelog/Handler.h>
+#include <Jelog/Level.h>
+#include <Jelog/LogRecord.h>
+#include <Jelog/StreamHandler.h>
 
 #pragma region Declarations
 
@@ -33,7 +38,7 @@ namespace JeLog
     class Logger
     {
     private:
-        char *m_Name;
+        std::string m_Name;
         JeLog::Level m_Level;
         std::vector<JeLog::Handler> m_Handlers;
         std::mutex m_Lock;
@@ -76,7 +81,7 @@ namespace JeLog
         /// \brief Initialize the logger with a name and an optional level.
         ///
         /////////////////////////////////////////////////////////////////////////
-        Logger(Logger &&logger) noexcept;
+        Logger(Logger &&logger);
 
         /////////////////////////////////////////////////////////////////////////
         ///
@@ -109,7 +114,7 @@ namespace JeLog
         /// \brief Initialize the logger with a name and an optional level.
         ///
         /////////////////////////////////////////////////////////////////////////
-        Logger &operator=(Logger logger) noexcept;
+        Logger &operator=(Logger logger);
 
         /////////////////////////////////////////////////////////////////////////
         /// \brief Name the Logger.
@@ -117,13 +122,13 @@ namespace JeLog
         /// \param name
         ///
         /////////////////////////////////////////////////////////////////////////
-        void SetName(char *);
+        void SetName(std::string name);
 
         /////////////////////////////////////////////////////////////////////////
         /// \brief Get the current log severity.
         ///
         /////////////////////////////////////////////////////////////////////////
-        char *Name() const;
+        std::string Name() const;
 
         /////////////////////////////////////////////////////////////////////////
         /// \brief Set a New log severity.
@@ -146,7 +151,7 @@ namespace JeLog
 
         // set formatting for the sinks in this logger.
         // each sink will get a separate instance of the formatter object.
-        void SetFormatter(JeLog::Formatter &formatter);
+        void SetFormatter(JeLog::Formatter *formatter);
 
         /////////////////////////////////////////////////////////////////////////
         /// \brief Is this logger enabled for level 'level'?
@@ -175,7 +180,7 @@ namespace JeLog
         ///
         /////////////////////////////////////////////////////////////////////////
         template <typename... Args>
-        void _Log(JeLog::Time *time, SourceInfo src_Loc, JeLog::Level level, char *format, Args &&...args);
+        void _Log(JeLog::Time *creationTime, SourceInfo srcInfo, JeLog::Level level, char *format, Args &&...args);
 
         /////////////////////////////////////////////////////////////////////////
         ///
@@ -184,7 +189,7 @@ namespace JeLog
         ///
         /////////////////////////////////////////////////////////////////////////
         template <typename T>
-        void _Log(JeLog::Time *time, JeLog::SourceInfo src_Loc, JeLog::Level level, T message);
+        void _Log(JeLog::Time *time, JeLog::SourceInfo srcInfo, JeLog::Level level, T message);
 
         /////////////////////////////////////////////////////////////////////////
         /// \brief Call the handlers for the specified record.
@@ -244,8 +249,6 @@ namespace JeLog
         /////////////////////////////////////////////////////////////////////////
         LogRecord Record();
 
-        /////////// Log
-
         /////////////////////////////////////////////////////////////////////////
         ///
         /// \brief Log 'message' with default severity.
@@ -302,7 +305,7 @@ namespace JeLog
         ///
         /// \brief Log 'message' with "level" severity with source location info.
         ///
-        /// \param src_loc source location of Log.
+        /// \param srcInfo source location of Log.
         /// \param level severity of Log.
         /// \param message message to Log.
         ///
@@ -316,7 +319,7 @@ namespace JeLog
         ///
         /// \brief Log '..args' with "level" severity with source location info.
         ///
-        /// \param src_loc source location of Log.
+        /// \param srcInfo source location of Log.
         /// \param level severity of Log.
         /// \param format log format.
         /// \param ...args  Arguments to Log.
@@ -332,7 +335,7 @@ namespace JeLog
         /// \brief Log 'message' with "level" severity with source and time info.
         ///
         /// \param log_time time of Logging.
-        /// \param src_loc source location of Log.
+        /// \param srcInfo source location of Log.
         /// \param level severity of Log.
         /// \param message message to Log.
         ///
@@ -347,7 +350,7 @@ namespace JeLog
         /// \brief Log '..args' with "level" severity with source and time info.
         ///
         /// \param log_time time of Logging.
-        /// \param src_loc source location of Log.
+        /// \param srcInfo source location of Log.
         /// \param level severity of Log.
         /// \param format log format.
         /// \param ...args  Arguments to Log.
@@ -389,7 +392,7 @@ namespace JeLog
         ///
         /// \brief Log 'message' with "TRACE" severity with source location info.
         ///
-        /// \param src_loc source location of Log.
+        /// \param srcInfo source location of Log.
         /// \param message message to Log.
         ///
         /// logger.Trace(loc,"Hello Zeke!");
@@ -402,7 +405,7 @@ namespace JeLog
         ///
         /// \brief Log '..args' with "TRACE" severity with source location info.
         ///
-        /// \param src_loc source location of Log.
+        /// \param srcInfo source location of Log.
         /// \param format log format.
         /// \param ...args  Arguments to Log.
         ///
@@ -417,7 +420,7 @@ namespace JeLog
         /// \brief Log 'message' with "TRACE" severity with source and time info.
         ///
         /// \param log_time time of Logging.
-        /// \param src_loc source location of Log.
+        /// \param srcInfo source location of Log.
         /// \param message message to Log.
         ///
         /// logger.Trace(time,loc,"Hello Zeke");
@@ -431,7 +434,7 @@ namespace JeLog
         /// \brief Log '..args' with "TRACE" severity with source and time info.
         ///
         /// \param log_time time of Logging.
-        /// \param src_loc source location of Log.
+        /// \param srcInfo source location of Log.
         /// \param format log format.
         /// \param ...args  Arguments to Log.
         ///
@@ -486,12 +489,11 @@ namespace JeLog
     Logger::Logger()
     {
 
-        m_Name;
-        m_Level;
-        m_Handlers;
+        // m_Name;
+        // m_Level;
+        // m_Handlers;
 
-        StreamHandler streamHandler;
-        m_Handlers.push_back(streamHandler);
+        m_Handlers.push_back(StreamHandler());
 
         // FileHandler fileHandler;
         // m_Handlers.push_back(fileHandler);
@@ -501,8 +503,8 @@ namespace JeLog
     Logger::Logger(T name)
     {
         m_Name = name;
-        m_Level;
-        m_Handlers;
+        // m_Level;
+        // m_Handlers;
     };
 
     template <typename... Args>
@@ -516,25 +518,25 @@ namespace JeLog
     Logger::Logger(T name, Handler &handler)
     {
         m_Name = name;
-        m_Handlers.push_back(handler)
+        m_Handlers.push_back(handler);
     };
 
     template <typename T>
     Logger::Logger(T name, std::vector<Handler> &handlers)
     {
         m_Name = name;
-        m_Level;
-        m_Handlers = handlers
+        // m_Level;
+        m_Handlers = handlers;
     };
 
     Logger &Logger::operator=(Logger other) {};
 
-    void Logger::SetName(char *name)
+    void Logger::SetName(std::string name)
     {
         m_Name = name;
     };
 
-    char *Logger::Name() const
+    std::string Logger::Name() const
     {
         return m_Name;
     };
@@ -585,9 +587,9 @@ namespace JeLog
     };
 
     template <typename... Args>
-    void Logger::_Log(clock::time_point creationTime, SourceInfo srcLoc, JeLog::Level level, char *fmt, Args &&...args)
+    void Logger::_Log(Time *creationTime, SourceInfo srcInfo, JeLog::Level level, char *format, Args &&...args)
     {
-        char *message;
+        std::string message;
 
         // long long createdTime = std::chrono::time_point_cast<std::chrono::microseconds>(Timepoint).time_since_epoch().count();
 
@@ -600,24 +602,8 @@ namespace JeLog
 
         uint32_t threadID = std::hash<std::thread::id>{}(std::this_thread::get_id());
 
-        LogRecord logRecord = MakeLogRecord(m_Name, level, srcLoc, creationTime, message, threadID);
-
-        if (logRecord.m_SrcLoc.m_FileName == "")
-        {
-            logRecord.m_SrcLoc.m_FileName = __FILE__;
-        }
-        if (logRecord.m_SrcLoc.m_FuncName == "")
-        {
-            logRecord.m_SrcLoc.m_FuncName == "Undefined";
-        }
-        if (logRecord.m_SrcLoc.m_Line == 0)
-        {
-            logRecord.m_SrcLoc.m_Line = __LINE__;
-        }
-        if (logRecord.m_CreatedTime.m_MilliSeconds == 0)
-        {
-            logRecord.m_CreatedTime.m_MilliSeconds = JeLog::StopWatch::ElapsedMS().count();
-        }
+        ThreadInfo threadInfo(threadID, std::string(""));
+        LogRecord logRecord = LogRecord(m_Name, level, srcInfo, creationTime, message, threadInfo);
 
         for (auto &handler : m_Handlers)
         {
@@ -626,7 +612,7 @@ namespace JeLog
     };
 
     template <typename T>
-    void Logger::_Log(clock::time_point creationTime, SourceInfo srcLoc, JeLog::Level level, T message)
+    void Logger::_Log(JeLog::Time *time, JeLog::SourceInfo srcInfo, JeLog::Level level, T message)
     {
         // long long createdTime = std::chrono::time_point_cast<std::chrono::microseconds>(Timepoint).time_since_epoch().count();
 
@@ -639,24 +625,9 @@ namespace JeLog
 
         uint32_t threadID = std::hash<std::thread::id>{}(std::this_thread::get_id());
 
-        LogRecord logRecord = MakeLogRecord(m_Name, level, srcLoc, creationTime, message, threadID);
+        ThreadInfo threadInfo(threadID, "");
 
-        if (logRecord.m_SrcLoc.m_FileName == "")
-        {
-            logRecord.m_SrcLoc.m_FileName = __FILE__;
-        }
-        if (logRecord.m_SrcLoc.m_FuncName == "")
-        {
-            logRecord.m_SrcLoc.m_FuncName == "Undefined"
-        }
-        if (logRecord.m_SrcLoc.m_Line == 0)
-        {
-            logRecord.m_SrcLoc.m_Line = __LINE__;
-        }
-        if (logRecord.m_CreatedTime.m_MilliSeconds == 0)
-        {
-            logRecord.m_CreatedTime.m_MilliSeconds = JeLog::StopWatch::ElapsedMS().count();
-        }
+        LogRecord logRecord = LogRecord(m_Name, level, srcInfo, time, message, threadInfo);
 
         for (auto &handler : m_Handlers)
         {
@@ -664,10 +635,10 @@ namespace JeLog
         }
     };
 
-    void Logger::AddHandler(Handler &handler)
-    {
-        m_Handlers.push_back(handler);
-    };
+    // void Logger::AddHandler(Handler &handler)
+    // {
+    //     m_Handlers.push_back(handler);
+    // };
 
     bool Logger::HasHandlers()
     {
@@ -681,17 +652,16 @@ namespace JeLog
         return hasHanlders;
     };
 
-    LogRecord Logger::Record()
-    {
-        JeLog::Time *creationTime;
-        JeLog::SourceInfo srcLoc(__FILE__, __LINE__, "__FUNCSIG__");
+    LogRecord Logger::Record() {
+        // JeLog::Time *creationTime;
+        // JeLog::SourceInfo srcInfo(__FILE__, __LINE__, "__FUNCSIG__");
 
-        long long createdTime = std::chrono::time_point_cast<std::chrono::microseconds>(Timepoint).time_since_epoch().count();
-        uint32_t threadID = std::hash<std::thread::id>{}(std::this_thread::get_id());
+        // long long createdTime = std::chrono::time_point_cast<std::chrono::microseconds>(Timepoint).time_since_epoch().count();
+        // uint32_t threadID = std::hash<std::thread::id>{}(std::this_thread::get_id());
 
-        LogRecord logRecord = MakeLogRecord(m_Name, m_Level, srcLoc, creationTime, "", threadID);
+        // LogRecord logRecord = LogRecord(m_Name, m_Level, srcInfo, creationTime, "", threadID);
 
-        return logRecord;
+        // return logRecord;
     };
 
     void Logger::Handle(LogRecord &logRecord) {};
@@ -751,27 +721,27 @@ namespace JeLog
     };
 
     template <typename T>
-    LogRecord Logger::Log(SourceInfo srcLoc, JeLog::Level level, T message)
+    LogRecord Logger::Log(SourceInfo srcInfo, JeLog::Level level, T message)
     {
-        _Log({}, srcLoc, level, message);
+        _Log({}, srcInfo, level, message);
     };
 
     template <typename... Args>
-    LogRecord Logger::Log(SourceInfo srcLoc, JeLog::Level level, char *format, Args &&...args)
+    LogRecord Logger::Log(SourceInfo srcInfo, JeLog::Level level, char *format, Args &&...args)
     {
-        _Log({}, srcLoc, level, format, std::forward<Args>(args)...);
+        _Log({}, srcInfo, level, format, std::forward<Args>(args)...);
     };
 
     template <typename T>
-    LogRecord Logger::Log(clock::time_point creationTime, SourceInfo srcLoc, JeLog::Level level, T message)
+    LogRecord Logger::Log(clock::time_point creationTime, SourceInfo srcInfo, JeLog::Level level, T message)
     {
-        _Log(creationTime, srcLoc, level, message);
+        _Log(creationTime, srcInfo, level, message);
     };
 
     template <typename... Args>
-    LogRecord Logger::Log(clock::time_point creationTime, SourceInfo srcLoc, JeLog::Level level, char *format, Args... args)
+    LogRecord Logger::Log(clock::time_point creationTime, SourceInfo srcInfo, JeLog::Level level, char *format, Args... args)
     {
-        _Log(creationTime, srcLoc, level, format, std::forward<Args>(args)...);
+        _Log(creationTime, srcInfo, level, format, std::forward<Args>(args)...);
     };
 
     ////// Trace
@@ -789,27 +759,27 @@ namespace JeLog
     };
 
     template <typename T>
-    LogRecord Logger::Trace(SourceInfo srcLoc, T message)
+    LogRecord Logger::Trace(SourceInfo srcInfo, T message)
     {
-        Log(srcLoc, JeLog::Level::trace, message);
+        Log(srcInfo, JeLog::Level::trace, message);
     };
 
     template <typename... Args>
-    LogRecord Logger::Trace(SourceInfo srcLoc, char *format, Args &&...args)
+    LogRecord Logger::Trace(SourceInfo srcInfo, char *format, Args &&...args)
     {
-        Log({}, srcLoc, JeLog::Level::trace, format, std::forward<Args>(args)...);
+        Log({}, srcInfo, JeLog::Level::trace, format, std::forward<Args>(args)...);
     };
 
     template <typename T>
-    LogRecord Logger::Trace(clock::time_point creationTime, SourceInfo srcLoc, T message)
+    LogRecord Logger::Trace(clock::time_point creationTime, SourceInfo srcInfo, T message)
     {
-        Log(creationTime, srcLoc, JeLog::Level::trace, message);
+        Log(creationTime, srcInfo, JeLog::Level::trace, message);
     };
 
     template <typename... Args>
-    LogRecord Logger::Trace(clock::time_point creationTime, SourceInfo srcLoc, char *format, Args... args)
+    LogRecord Logger::Trace(clock::time_point creationTime, SourceInfo srcInfo, char *format, Args... args)
     {
-        Log(creationTime, srcLoc, JeLog::Level::trace, format, std::forward<Args>(args)...);
+        Log(creationTime, srcInfo, JeLog::Level::trace, format, std::forward<Args>(args)...);
     };
 
     // #define JE_LOG_LOG_LOGGER
@@ -820,3 +790,28 @@ namespace JeLog
 } // namespace JeLog
 
 #pragma endregion // Definitions
+
+/**
+ * LICENSE: MIT License
+ *
+ * Copyright (c) 2025 Sackey Ezekiel Etrue
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */

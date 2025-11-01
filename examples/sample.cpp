@@ -1,7 +1,7 @@
-#include "../JeLog/DefaultLogger.h"
+#include <JeLog/Jelog.h>
 
 int main(int argc, char const *argv[])
 {
-    JeLog::DefaultLogger::Get().Log("Hello");
+    JeLog::DefaultLogger::Get().Log(std::string("Hello"));
     return 0;
 };

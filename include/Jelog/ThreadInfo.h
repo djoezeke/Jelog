@@ -1,5 +1,7 @@
 #pragma once
+
 #include <cstdint>
+#include <string>
 
 // O------------------------------------------------------------------------------O
 // | Je-Log Declarations                                                          |
@@ -23,9 +25,9 @@ namespace JeLog
     /////////////////////////////////////////////////////////////////////////
     struct ThreadInfo
     {
-    public:                  // Data
-        uint32_t m_ThreadID; //  Thread ID of Location of Log.
-        char *m_ThreadName;  // Thread Name of Location of Log.
+    public:                       // Data
+        uint32_t m_ThreadID;      //  Thread ID of Location of Log.
+        std::string m_ThreadName; // Thread Name of Location of Log.
 
     public: // Methods
         /////////////////////////////////////////////////////////////////////////
@@ -41,7 +43,7 @@ namespace JeLog
         /// \param threadName Thread Name of Location of Log.
         ///
         /////////////////////////////////////////////////////////////////////////
-        ThreadInfo(uint32_t threadID, char *threadName);
+        ThreadInfo(uint32_t threadID, std::string threadName);
 
         /////////////////////////////////////////////////////////////////////////
         /// \brief Check if a Log Thread ID is Unknown.
@@ -82,7 +84,7 @@ namespace JeLog
         m_ThreadName = "";
     };
 
-    ThreadInfo::ThreadInfo(uint32_t threadID, char *threadName)
+    ThreadInfo::ThreadInfo(uint32_t threadID, std::string threadName)
     {
         m_ThreadID = threadID;
         m_ThreadName = threadName;
@@ -90,7 +92,6 @@ namespace JeLog
 
     bool ThreadInfo::UnKnown() const
     {
-        // First Time Using the Tenary Operator. [01/04/2025] [03:58 PM]
         bool isEmpty = m_ThreadID == 0 ? true : false;
         return isEmpty;
     };
@@ -103,3 +104,28 @@ namespace JeLog
 }; // namespace JeLog
 
 #pragma endregion // Definitions
+
+/**
+ * LICENSE: MIT License
+ *
+ * Copyright (c) 2025 Sackey Ezekiel Etrue
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */

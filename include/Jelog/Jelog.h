@@ -1,16 +1,20 @@
 #pragma once
 
-#include "je-log/Level.h"
-#include "je-log/Formatter.h"
-#include "je-log/Handler.h"
-#include "je-log/SourceInfo.h"
-#include "je-log/LogRecord.h"
-#include "je-log/StreamHandler.h"
-#include "je-log/StringFormatter.h"
-#include "je-log/Filter.h"
-#include "je-log/Filterer.h"
-#include "je-log/JeTime.h"
-#include "je-log/Logger.h"
+#include <Jelog/DefaultLogger.h>
+#include <Jelog/FileHandler.h>
+#include <Jelog/Filter.h>
+#include <Jelog/Filterer.h>
+#include <Jelog/Formatter.h>
+#include <Jelog/Handler.h>
+#include <Jelog/JeTime.h>
+#include <Jelog/JsonFormatter.h>
+#include <Jelog/Level.h>
+#include <Jelog/LogRecord.h>
+#include <Jelog/Logger.h>
+#include <Jelog/SourceInfo.h>
+#include <Jelog/StreamHandler.h>
+#include <Jelog/StringFormatter.h>
+#include <Jelog/ThreadInfo.h>
 
 #pragma region Declarations
 
@@ -107,19 +111,6 @@ namespace JeLog
     ///
     /////////////////////////////////////////////////////////////////////////
     void AddLevelName(JeLog::Level level, char *levelName);
-
-    /////////////////////////////////////////////////////////////////////////
-    ///
-    /// \brief Make a Log Record.
-    ///
-    /// Make a LogRecord whose attributes are defined by the specified dictionary,
-    /// This function is useful for converting a logging event received over
-    /// a socket connection (which is sent as a dictionary) into a LogRecord
-    /// instance.
-    ///
-    /////////////////////////////////////////////////////////////////////////
-    LogRecord MakeLogRecord(char *name, JeLog::Level level, JeLog::SourceInfo srcLoc,
-                            JeLog::Time creationTime, char *message, int threadID);
 
     /////////////////////////////////////////////////////////////////////////
     ///
@@ -359,7 +350,6 @@ namespace JeLog
     // - GetLogger()
     // - AddLevelName()
     // - GetLevelName()
-    // - MakeLogRecord()
     // - Log()
     // - Trace()
     // - Error()
@@ -372,11 +362,6 @@ namespace JeLog
     void BasicConfig(...) {};
 
     Logger GetLogger(char *name) {};
-
-    LogRecord MakeLogRecord(char *name, JeLog::Level level, JeLog::SourceInfo srcLoc,
-                            JeLog::Time *creationTime, char *message, int threadID) {
-
-    };
 
     void AddLevelName(JeLog::Level level, char *levelName) {};
 
@@ -433,3 +418,28 @@ namespace JeLog
 } // namespace JeLog
 
 #pragma endregion // Definitions
+
+/**
+ * LICENSE: MIT License
+ *
+ * Copyright (c) 2025 Sackey Ezekiel Etrue
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */

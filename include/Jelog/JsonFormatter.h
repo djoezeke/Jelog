@@ -3,9 +3,11 @@
 // #include <algorithm>
 // #include <mutex>
 // #include <thread>
-// #include <fstream>
 
-#include "Formatter.h"
+#include <fstream>
+#include <iostream>
+
+#include <Jelog/Formatter.h>
 
 #pragma region Declarations
 
@@ -62,6 +64,9 @@ namespace JeLog
         ///
         /////////////////////////////////////////////////////////////////////////
         JsonFormatter();
+
+        ~JsonFormatter();
+
         /////////////////////////////////////////////////////////////////////////
         ///
         /// \brief Format the specified record as text.
@@ -99,15 +104,13 @@ namespace JeLog
         /// set the 'converter' attribute in the Formatter class.
         ///
         /////////////////////////////////////////////////////////////////////////
-        void TimeFormat(JeLog::LogRecord &logRecord, char *format) override;
+        void TimeFormat(JeLog::LogRecord &logRecord, char *format);
 
         /////////////////////////////////////////////////////////////////////////
         /// \brief Return the Name for this LogRecord.
         ///
-        /*
-         */
         /////////////////////////////////////////////////////////////////////////
-        void MessageFormat(JeLog::LogRecord &logRecord, char *format) override;
+        void MessageFormat(JeLog::LogRecord &logRecord, char *format);
     };
 
 #define JE_LOG_JSON_FORMATTER
@@ -142,8 +145,6 @@ namespace JeLog
     // - WriteHeader()
     // - WriteFooter()
     //-----------------------------------------------------------------------------
-
-    JsonFormatter::JsonFormatter() {};
 
     JsonFormatter::JsonFormatter() {};
 
@@ -210,3 +211,28 @@ namespace JeLog
 } // namespace JeLog
 
 #pragma endregion // Definitions
+
+/**
+ * LICENSE: MIT License
+ *
+ * Copyright (c) 2025 Sackey Ezekiel Etrue
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */

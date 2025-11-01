@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 // O------------------------------------------------------------------------------O
 // | Je-Log Declarations                                                          |
 // O------------------------------------------------------------------------------O
@@ -22,10 +24,10 @@ namespace JeLog
     /////////////////////////////////////////////////////////////////////////
     struct SourceInfo
     {
-    public:               // Data
-        char *m_FileName; // File Name of Location of Log.
-        int m_Line;       // Line Number of Location of Log.
-        char *m_FuncName; // Function Name of Location of Log.
+    public:                     // Data
+        std::string m_FileName; // File Name of Location of Log.
+        size_t m_Line;          // Line Number of Location of Log.
+        std::string m_FuncName; // Function Name of Location of Log.
 
     public: // Methods
         /////////////////////////////////////////////////////////////////////////
@@ -42,7 +44,7 @@ namespace JeLog
         /// \param funcname Function Name of Location of Log.
         ///
         /////////////////////////////////////////////////////////////////////////
-        SourceInfo(char *filename, int line, char *funcname);
+        SourceInfo(std::string filename, size_t line, std::string funcname);
 
         /////////////////////////////////////////////////////////////////////////
         /// \brief Check if a Log Source Info is Unknown.
@@ -84,7 +86,7 @@ namespace JeLog
         m_FuncName = "";
     };
 
-    SourceInfo::SourceInfo(char *filename, int line, char *funcname)
+    SourceInfo::SourceInfo(std::string filename, size_t line, std::string funcname)
     {
         m_FileName = filename;
         m_Line = line;
@@ -106,3 +108,28 @@ namespace JeLog
 }; // namespace JeLog
 
 #pragma endregion // Definitions
+
+/**
+ * LICENSE: MIT License
+ *
+ * Copyright (c) 2025 Sackey Ezekiel Etrue
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */

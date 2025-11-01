@@ -1,10 +1,12 @@
 
 #pragma once
 
-#include "Je-Log.h"
-#include "SourceInfo.h"
-#include "ThreadInfo.h"
-#include "JeTime.h"
+#include <string>
+
+#include <Jelog/JeTime.h>
+#include <Jelog/Level.h>
+#include <Jelog/SourceInfo.h>
+#include <Jelog/ThreadInfo.h>
 
 // O------------------------------------------------------------------------------O
 // | Je-Log Declarations                                                          |
@@ -32,8 +34,8 @@ namespace JeLog
     class LogRecord
     {
     private:
-        char *m_Name;
-        char *m_Msg;
+        std::string m_Name;
+        std::string m_Msg;
         JeLog::Level m_Level;
         JeLog::SourceInfo m_SrcInfo;
         JeLog::ThreadInfo m_ThdInfo;
@@ -50,20 +52,20 @@ namespace JeLog
         /// \brief Initialize a Logging Record with provided Information.
         ///
         /// \param name
-        /// \param message
         /// \param level
         /// \param sourceInfo
         /// \param creationTime
-        /// \param threadID
+        /// \param message
+        /// \param threadInfo
         ///
         /////////////////////////////////////////////////////////////////////////
-        LogRecord(char *name, char *message, JeLog::Level level, JeLog::SourceInfo sourceInfo, JeLog::Time *creationTime, JeLog::ThreadInfo threadInfo);
+        LogRecord(std::string name, Level level, SourceInfo sourceInfo, Time *creationTime, char *message, ThreadInfo threadInfo);
 
         /////////////////////////////////////////////////////////////////////////
         /// \brief Return the Name for this LogRecord.
         ///
         /////////////////////////////////////////////////////////////////////////
-        char *GetName();
+        std::string GetName();
 
         /////////////////////////////////////////////////////////////////////////
         /// \brief Set the Name for this LogRecord.
@@ -71,7 +73,7 @@ namespace JeLog
         /// \param name
         ///
         /////////////////////////////////////////////////////////////////////////
-        void SetName(char *name);
+        void SetName(std::string name);
 
         /////////////////////////////////////////////////////////////////////////
         /// \brief Return the Level for this LogRecord.
@@ -91,7 +93,7 @@ namespace JeLog
         /// \brief Return the message for this LogRecord.
         ///
         /////////////////////////////////////////////////////////////////////////
-        char *GetMessage();
+        std::string GetMessage();
 
         /////////////////////////////////////////////////////////////////////////
         /// \brief Set the message for this LogRecord.
@@ -99,13 +101,13 @@ namespace JeLog
         /// \param message
         ///
         /////////////////////////////////////////////////////////////////////////
-        void SetMessage(char *message);
+        void SetMessage(std::string message);
 
         /////////////////////////////////////////////////////////////////////////
         /// \brief Return the Name of the Function in which this LogRecord was Created.
         ///
         /////////////////////////////////////////////////////////////////////////
-        char *GetFunction();
+        std::string GetFunction();
 
         /////////////////////////////////////////////////////////////////////////
         /// \brief Set the Name of the Function in which this LogRecord was Created.
@@ -113,13 +115,13 @@ namespace JeLog
         /// \param name
         ///
         /////////////////////////////////////////////////////////////////////////
-        void SetFunction(char *name);
+        void SetFunction(std::string name);
 
         /////////////////////////////////////////////////////////////////////////
         /// \brief Return the File Name in which this LogRecord was Created.
         ///
         /////////////////////////////////////////////////////////////////////////
-        char *GetFileName();
+        std::string GetFileName();
 
         /////////////////////////////////////////////////////////////////////////
         /// \brief Set the File Name in which this LogRecord was Created.
@@ -127,13 +129,13 @@ namespace JeLog
         /// \param filename
         ///
         /////////////////////////////////////////////////////////////////////////
-        void SetFileName(char *filename);
+        void SetFileName(std::string filename);
 
         /////////////////////////////////////////////////////////////////////////
         /// \brief Return the Line Number for which this LogRecord was Created.
         ///
         /////////////////////////////////////////////////////////////////////////
-        int GetLineNo();
+        size_t GetLineNo();
 
         /////////////////////////////////////////////////////////////////////////
         /// \brief Set the Line Number for which this LogRecord was Created.
@@ -141,7 +143,7 @@ namespace JeLog
         /// \param lineno
         ///
         /////////////////////////////////////////////////////////////////////////
-        void SetLineNo(int lineno);
+        void SetLineNo(size_t lineno);
 
         /////////////////////////////////////////////////////////////////////////
         /// \brief Return the Thread ID for this LogRecord.
@@ -161,7 +163,7 @@ namespace JeLog
         /// \brief Return the Thread Name for this LogRecord.
         ///
         /////////////////////////////////////////////////////////////////////////
-        char *GetThreadName();
+        std::string  GetThreadName();
 
         /////////////////////////////////////////////////////////////////////////
         /// \brief Set the Thread Name for this LogRecord.
@@ -169,7 +171,7 @@ namespace JeLog
         /// \param threadName
         ///
         /////////////////////////////////////////////////////////////////////////
-        void SetThreadName(char *threadName);
+        void SetThreadName(std::string threadName);
 
         /////////////////////////////////////////////////////////////////////////
         /// \brief Return the Time of Creation for this LogRecord.
@@ -233,7 +235,7 @@ namespace JeLog
         m_ThdInfo = JeLog::ThreadInfo();
     };
 
-    LogRecord::LogRecord(char *name, char *message, JeLog::Level level, JeLog::SourceInfo sourceInfo, JeLog::Time *creationTime, JeLog::ThreadInfo threadInfo)
+    LogRecord::LogRecord(std::string name, Level level, SourceInfo sourceInfo, Time *creationTime, char *message, ThreadInfo threadInfo)
     {
         m_Name = name;
         m_Msg = message;
@@ -243,7 +245,7 @@ namespace JeLog
         m_ThdInfo = threadInfo;
     };
 
-    char *LogRecord::GetName()
+    std::string LogRecord::GetName()
     {
         return m_Name;
     };
@@ -253,56 +255,52 @@ namespace JeLog
         return m_Level;
     };
 
-    void LogRecord::SetName(char *name)
+    void LogRecord::SetName(std::string name)
     {
-        // assert if name is not char* type
         m_Name = name;
     };
 
     void LogRecord::SetLevel(JeLog::Level level)
     {
-        // assert if level is not int type
         m_Level = level;
     };
 
-    char *LogRecord::GetMessage()
+    std::string LogRecord::GetMessage()
     {
         return m_Msg;
     };
 
-    void LogRecord::SetMessage(char *message)
+    void LogRecord::SetMessage(std::string message)
     {
-        // assert if message is not char* type
         m_Msg = message;
     };
 
-    char *LogRecord::GetFunction()
+    std::string LogRecord::GetFunction()
     {
         return m_SrcInfo.m_FuncName;
     };
 
-    void LogRecord::SetFunction(char *function)
+    void LogRecord::SetFunction(std::string function)
     {
-        // assert if function is not char* type
         m_SrcInfo.m_FuncName = function;
     };
 
-    char *LogRecord::GetFileName()
+    std::string LogRecord::GetFileName()
     {
         return m_SrcInfo.m_FileName;
     };
 
-    void LogRecord::SetFileName(char *filename)
+    void LogRecord::SetFileName(std::string filename)
     {
         m_SrcInfo.m_FileName = filename;
     };
 
-    int LogRecord::GetLineNo()
+    size_t LogRecord::GetLineNo()
     {
         return m_SrcInfo.m_Line;
     };
 
-    void LogRecord::SetLineNo(int line)
+    void LogRecord::SetLineNo(size_t line)
     {
         m_SrcInfo.m_Line = line;
     };
@@ -317,12 +315,12 @@ namespace JeLog
         m_ThdInfo.m_ThreadID = threadID;
     };
 
-    char *LogRecord::GetThreadName()
+    std::string LogRecord::GetThreadName()
     {
         return m_ThdInfo.m_ThreadName;
     };
 
-    void LogRecord::SetThreadName(char *threadName)
+    void LogRecord::SetThreadName(std::string threadName)
     {
         m_ThdInfo.m_ThreadName = threadName;
     };
@@ -345,3 +343,28 @@ namespace JeLog
 }; // namespace JeLog
 
 #pragma endregion // Definitions
+
+/**
+ * LICENSE: MIT License
+ *
+ * Copyright (c) 2025 Sackey Ezekiel Etrue
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
