@@ -14,7 +14,7 @@ integrating Jelog in your own application.
 Integration in a typical existing application, should take no time.
 
 ```cpp
-#include <Jelog/Jelog.h>
+#include <jelog/jelog.h>
 ```
 
 Main resource:
